@@ -13,31 +13,39 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"flag"
 )
 
 func main() {
 
-	//Call count function
-	fmt.Println(count(os.Stdin))
+	//This mofication counts the numbers of lines instead words
+	lines := flag.Bool("l", false, "Count lines")
+
+	//Parsing the flags provided by the user
+	flag.Parse()
+
+	fmt.Println(count(os.Stdin, *lines))
 
 }
 
-func count(r io.Reader) int {
+func count(r io.Reader, countLines bool) int {
 
 	// Scanner used to read text from a Reader
 	scanner := bufio.NewScanner(r)
 
-	//Using Split to split type to words (default by lines)
-	scanner.Split(bufio.ScanWords)
+	// If the count lines flag is not set, we want to count words so we define
+	// the scanner split type to words (default is split by lines)
+	if !countLines {
+		scanner.Split(bufio.ScanWords)
+	}
 
 	//Defining the counter
 	wordcount := 0
 
-	// Increment the counter for word scanned
+	// Increment the counter for every word or line scanned
 	for scanner.Scan() {
 		wordcount++
 	}
 
 	return wordcount
-
 }
